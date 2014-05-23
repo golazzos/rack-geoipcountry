@@ -37,14 +37,18 @@ module Rack
     end
 
     def valid_domain?(env, country)
-      env['SERVER_NAME'].include?(@domains[country])
+      env['SERVER_NAME'].include?(get_domain(country))
     end
 
     def redirect_to_(country)
-      domain = @domains[country] ? @domains[country] : @domains["default"]
+      domain = get_domain(country)
       response = Rack::Response.new
       response.redirect domain
       response.finish
+    end
+
+    def get_domain(country)
+      @domains[country] ? @domains[country] : @domains["default"]
     end
   end
 end

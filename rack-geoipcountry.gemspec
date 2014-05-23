@@ -12,10 +12,10 @@ Gem::Specification.new do |s|
   s.summary     = %q{Rack middleware for Geo IP country lookup}
   s.description = %q{Rack::GeoIPCountry uses the geoip gem and the GeoIP database to lookup the country of a request by its IP address}
   s.license     = 'MIT'
-  
+
   s.rubyforge_project = "rack-geoipcountry"
 
-  s.add_dependency 'geoip', '>= 1.1.2'
+  s.add_dependency 'geoip',  '~> 1.4.0'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

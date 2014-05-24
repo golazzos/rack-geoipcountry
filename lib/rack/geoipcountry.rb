@@ -31,12 +31,13 @@ module Rack
       country = @db.country(ip).to_hash[:country_name]
       env['X_GEOIP_COUNTRY'] = country
 
-      if self.valid_domain?(request, country)
+      if valid_domain?(request, country)
         @app.call(env)
       else
         domain = get_domain(country)
+        domain += "?ip=#{ip}" if @ip_override
         response = Rack::Response.new
-        response.redirect domain
+        response.redirect "http://" + domain
         response.finish
       end
     end

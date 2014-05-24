@@ -17,7 +17,7 @@ module Rack
       options[:db] ||= 'GeoIP.dat'
 
       @domains = options[:domains]
-      @ip_override = options[:allow_ip_override]
+      @ip_override = options[:ip_override]
       @db = GeoIP.new(options[:db])
       @app = app
     end
@@ -25,8 +25,7 @@ module Rack
     def call(env)
       request = Rack::Request.new(env)
 
-      ip = request.params["ip"] if @ip_override
-      ip ||= request.ip
+      ip = @ip_override || request.ip
 
       country = @db.country(ip).to_hash[:country_name]
       env['X_GEOIP_COUNTRY'] = country
@@ -35,7 +34,6 @@ module Rack
         @app.call(env)
       else
         domain = get_domain(country)
-        domain += "?ip=#{ip}" if @ip_override
         response = Rack::Response.new
         response.redirect "http://" + domain
         response.finish

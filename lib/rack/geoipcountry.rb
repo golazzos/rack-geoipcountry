@@ -18,6 +18,7 @@ module Rack
 
       @domains = options[:domains]
       @ip_override = options[:ip_override]
+      @exclude_paths = options[:exclude_paths] || []
       @db = GeoIP.new(options[:db])
       @app = app
     end
@@ -30,7 +31,7 @@ module Rack
       country = @db.country(ip).to_hash[:country_name]
       env['X_GEOIP_COUNTRY'] = country
 
-      if valid_domain?(request, country)
+      if valid_domain?(request, country, env)
         @app.call(env)
       else
         domain = get_domain(country)
@@ -40,8 +41,8 @@ module Rack
       end
     end
 
-    def valid_domain?(request, country)
-      request.host_with_port == get_domain(country)
+    def valid_domain?(request, country, env)
+      (request.host_with_port == get_domain(country)) ||  @exclude_paths.include?(env["PATH_INFO"])
     end
 
     def get_domain(country)

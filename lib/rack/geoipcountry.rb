@@ -42,7 +42,7 @@ module Rack
     end
 
     def valid_domain?(request, country, env)
-      (request.host_with_port == get_domain(country)) ||  @exclude_paths.include?(env["PATH_INFO"])
+      (request.host_with_port == get_domain(country)) ||  @exclude_paths.index{ |x| x.match env["PATH_INFO"] }
     end
 
     def get_domain(country)

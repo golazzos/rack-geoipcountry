@@ -36,7 +36,12 @@ module Rack
       else
         domain = get_domain(country)
         response = Rack::Response.new
-        response.redirect "http://#{domain}/#{request.fullpath}"
+        redirect_path = if request.fullpath == "/"
+          "http://#{domain}/"
+        else
+          "http://#{domain}/#{request.fullpath}"
+        end
+        response.redirect redirect_path
         response.finish
       end
     end
